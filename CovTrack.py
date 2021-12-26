@@ -102,6 +102,55 @@ def get_covid_data(city):
 
 
 
+#Getting the Data of all the Countries
+def get_covid_data(country):
+
+  url = "https://news.google.com/covid19/map?hl=en-IN&gl=IN&ceid=IN%3Aen"
+  r = requests.get(url).text
+  soup = BeautifulSoup(r, 'html5lib')
+  table = soup.find('table', class_='pH8O4c')
+
+  locations = []
+  numbers = []
+
+  for data in table.find_all('th'):
+      locations.append(data.text)
+
+  for data in table.find_all('td'):
+      numbers.append(data.text)
+
+  for x in numbers:
+      if x == '':
+          numbers.remove(x)
+
+  data = {}
+
+  for location in range(6, len(locations)):
+      data[locations[location]] = []
+
+  for i in range(len(data)):
+
+      data[locations[i+6]] = [numbers[x] for x in range(4*i, 4*(i+1))]
+  state = country
+  state.strip()
+  state = state[0].upper() + state[1:]
+
+  print(locations)
+  print(numbers)
+
+  return f"""
+        
+        
+      Total number of COVID cases worldwide: {data['Worldwide'][0]}
+          
+      {state}'s COVID Cases Information:
+      -> Total number of cases: {data[state][0]}
+      -> Cases per million: {data[state][1]}
+      -> New cases: {data[state][2]}
+      -> Deaths: {data[state][3]}
+          """
+
+
 #Symptoms Checker Function.
 def symptoms_checker():
   
